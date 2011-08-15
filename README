@@ -1,7 +1,8 @@
 Feed Parsing class which downloads and oragnizes feed data for you. I will be using this quite often on my personal projects so regular updates are expected. Feel free to suggest any improvments or features which I might have missed.
 
 Supported Features
-	
+
+  - PHP Only So far
   - JSON Only Support
   - Google Blogger Parsing
   - Twitter (User stream only)
@@ -16,3 +17,4 @@ Proposed Features
   - Database storage support
   - Configuration File Support
   - REST Service For Javascript Integration
+  - More language support such as Java and Python
