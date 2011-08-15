@@ -20,8 +20,9 @@ class FeedParser {
 	
 	// Init
 	public function __construct () {
+		if (!class_exists('Memcache')) return;
 		$this->cache = new Memcache;
-		$this->cache->connect('localhost', 11211);
+		if (!@$this->cache->connect('localhost', 11211)) $this->cache = false;
 	}
 	
 	// Basic Internal Cache
