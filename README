@@ -1,0 +1,18 @@
+Feed Parsing class which downloads and oragnizes feed data for you. I will be using this quite often on my personal projects so regular updates are expected. Feel free to suggest any improvments or features which I might have missed.
+
+
+Supported Features
+	
+	- JSON Only Support
+	- Google Blogger Parsing
+	- Twitter (User stream only)
+	- Simple caching support
+	
+Proposed Features
+	
+	- Shared Google Reader Posts
+	- Public LastFM Data
+	- Wordpress Feeds
+	- More advanced caching
+	- Database storage support
+	- Configuration File Support
