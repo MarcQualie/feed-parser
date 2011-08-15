@@ -10,7 +10,7 @@
 include ('class.feedparser.php');
 $feed = new FeedParser();
 
-$limit		= 10;
+$limit		= 1;
 $user		= 'blog.marcqualie.com';
 $data		= $feed->blogger($user, $limit);
 
