@@ -5,8 +5,8 @@
  *		Feed Parser Class
  *		by Marc Qualie
  *
- *		http://www.marcqualie.com/projects/php-feed-parser/
- *		https://github.com/MarcQualie/php-feed-parser
+ *		http://www.marcqualie.com/projects/feed-parser/
+ *		https://github.com/MarcQualie/feed-parser
  *
  */
 
