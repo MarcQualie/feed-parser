@@ -22,6 +22,11 @@ header ('Content-type: text/plain');
 echo "Bandwidth: {$feed->bandwidth}\n";
 echo "Requests: {$feed->requests}\n";
 echo "\n";
-echo print_r($blog1, 1);
-echo print_r($blog2, 1);
-echo print_r($tweets, 1);
+
+// Dump
+$output  = 'blog1  = ' . print_r($blog1, 1) . "\n";
+$output .= 'blog2  = ' . print_r($blog2, 1) . "\n";
+$output .= 'tweets = ' . print_r($tweets, 1) . "\n";
+$fh = fopen ('example.log', 'w');
+  fwrite($fh, $output);
+  fclose($fh);
