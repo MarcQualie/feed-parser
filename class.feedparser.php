@@ -100,7 +100,7 @@ class FeedParser {
 		
 	}
 	
-	// Twitter
+	// Twitter (Partial)
 	public function twitter ($user, $limit = 10) {
 		$url = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name={$user}&count={$limit}";
 		$r = $this->req($url);
