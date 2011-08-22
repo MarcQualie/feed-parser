@@ -15,7 +15,6 @@ class FeedParser {
 	public $version				= '0.1.1';
 	private $useragent			= 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.112 Safari/535.1';
 	
-	
 	public $bandwidth			= 0;
 	public $requests			= 0;
 	
@@ -55,6 +54,7 @@ class FeedParser {
 	
 	// Basic Internal Cache
 	private function cache_get ($key) {
+		return false;
 		if (!$this->cache) return false;
 		return $this->cache->get($key);
 	}
@@ -105,6 +105,11 @@ class FeedParser {
 			$f['id'] = $m[1];
 			$f['title'] = $e['title']['$t'];
 			$f['content'] = $e['content']['$t'];
+			$f['content'] = str_replace('&nbsp;', ' ', $f['content']);
+			$f['content'] = preg_replace('/<div class="blogger-post-footer">(.*)<\/div>/U', '', $f['content']);
+			list ($preview) = explode("<a name='more'></a>", $f['content']);
+			while (substr($preview, -6) === '<br />') $preview = substr($preview, 0, strlen($preview) - 6);
+			$f['preview'] = $preview;
 			$f['published'] = strtotime($e['published']['$t']);
 			$f['updated'] = strtotime($e['updated']['$t']);
 			$f['author'] = array(
