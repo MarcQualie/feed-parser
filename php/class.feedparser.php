@@ -56,6 +56,7 @@ class FeedParser {
 	
 	// Basic Internal Cache
 	private function cache_get ($key) {
+		return false;
 		if (!$this->cache) return false;
 		return $this->cache->get($key);
 	}
