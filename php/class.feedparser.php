@@ -15,11 +15,11 @@ class FeedParser {
 	public $version				= '0.1.1';
 	private $useragent			= 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.112 Safari/535.1';
 	
-	
 	public $bandwidth			= 0;
 	public $requests			= 0;
 	
 	private $cache;
+	private $cache_enable		= false;
 	private $configfile			= './config.conf';
 	private $config				= array();
 	
@@ -29,6 +29,7 @@ class FeedParser {
 	public function __construct ($cf = null) {
 		if ($cf) $this->configfile = $cf;
 		if (!class_exists('Memcache')) return;
+		if (!$this->cache_enable) return;
 		$this->cache = new Memcache;
 		if (!@$this->cache->connect('localhost', 11211)) $this->cache = false;
 		$this->parse_config_file();
@@ -84,12 +85,11 @@ class FeedParser {
 		return $data;
 	}
 	
-	
-	
 	// Blog
-	public function blogger ($user, $limit = 5) {
+	public function blogger ($user, $limit = 5, $updated_unix = 0) {
 		$host = strpos($user, '.') !== false ? $user : "{$user}.blogspot.com";
-		$url = "http://{$host}/feeds/posts/default?alt=json&max-results={$limit}";
+		if ($updated_unix) { $updated_min = date('Y-m-d\TH:i:s', $updated_unix).'Z'; $updated_max =  date('Y-m-d\TH:i:s', time() + 86400).'Z'; }
+		$url = "http://{$host}/feeds/posts/default?alt=json&max-results={$limit}".($updated_min ? "&updated-min={$updated_min}&updated-max={$updated_max}&orderby=updated" : "");
 		$r = $this->req($url);
 		$j = json_decode($r['html'], true);
 		if (!$j['feed']['id']) return array('id' => 0, 'url' => $url);
@@ -99,12 +99,19 @@ class FeedParser {
 		$a['url'] = $url;
 		$a['title'] = $j['feed']['title']['$t'];
 		$a['subtitle'] = $j['feed']['subtitle']['$t'];
+		$a['posts'] = array();
+		if (!$j['feed']['entry']) $j['feed']['entry'] = array();
 		foreach ($j['feed']['entry'] as $e) {
 			$f = array();
 			preg_match('/post-([0-9]+)$/', $e['id']['$t'], $m);
 			$f['id'] = $m[1];
 			$f['title'] = $e['title']['$t'];
 			$f['content'] = $e['content']['$t'];
+			$f['content'] = str_replace('&nbsp;', ' ', $f['content']);
+			$f['content'] = preg_replace('/<div class="blogger-post-footer">(.*)<\/div>/U', '', $f['content']);
+			list ($preview) = explode("<a name='more'></a>", $f['content']);
+			while (substr($preview, -6) === '<br />') $preview = substr($preview, 0, strlen($preview) - 6);
+			$f['preview'] = $preview;
 			$f['published'] = strtotime($e['published']['$t']);
 			$f['updated'] = strtotime($e['updated']['$t']);
 			$f['author'] = array(
@@ -130,8 +137,8 @@ class FeedParser {
 	}
 	
 	// Twitter (Partial)
-	public function twitter ($user, $limit = 5) {
-		$url = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name={$user}&count={$limit}";
+	public function twitter ($user, $limit = 5, $since_id = 0) {
+		$url = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name={$user}&count={$limit}&since_id={$since_id}";
 		$r = $this->req($url);
 		$j = json_decode($r['html'], true);
 		return $j;
